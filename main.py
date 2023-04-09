@@ -114,5 +114,5 @@ async def on_message(message):
     if message.content.startswith('!VMst'):
          start_instance()
          await message.channel.send("Masznyna Ruszyła I Nic Jej Nie Zatrzyma (Daj jej 1-2 min żeby było GIT :LIKE:)")
-client.run('ODIzOTMzMzI1MTM5MjQ3MTI0.GVYqn0.5BPDLKWKqdBNgdaQyFtvGxkBQ3oaddqVBim0SY')
+client.run("Discord Bot Token")
 
