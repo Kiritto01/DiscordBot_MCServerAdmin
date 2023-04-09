@@ -8,10 +8,11 @@ intents = discord.Intents.all()
 client = discord.Client(command_prefix='!', intents=intents)
 
 #Tutorial z jakiego to robiłem https://www.youtube.com/watch?v=afPxQTqlMtg&ab_channel=TheCloudNerd
+#https://stackoverflow.com/questions/27535945/how-to-access-ssh-keys-for-a-google-cloud-platform-compute-engine-vm-instance
 
 def start_instance():
     # The API endpoint
-    url = "https://europe-central2-primal-pod-376313.cloudfunctions.net/vm-start"
+    url = "API endpoint"
 
     # A GET request to the API
     response = requests.get(url)
@@ -24,7 +25,7 @@ def start_instance():
 
 def stop_instance():
     # The API endpoint
-    url = "https://europe-central2-primal-pod-376313.cloudfunctions.net/vm-stop"
+    url = "API endpoint"
 
     # A GET request to the API
     response = requests.get(url)
@@ -49,7 +50,7 @@ async def on_message(message):
     # nawiązanie połączenia SSH
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect('34.116.177.154', username='patgi', key_filename='google_key')
+        ssh.connect('VM IP', username='ssh user', key_filename='ssh key')
 
         # uruchomienie skryptu Bash
         stdin, stdout, stderr = ssh.exec_command(f'bash {"mcStart"}')
@@ -70,7 +71,7 @@ async def on_message(message):
     # nawiązanie połączenia SSH
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect('34.116.177.154', username='patgi', key_filename='google_key')
+        ssh.connect('VM IP', username='ssh user', key_filename='ssh key')
 
         # uruchomienie skryptu Bash
         stdin, stdout, stderr = ssh.exec_command(f'bash {"mcStop"}')
@@ -91,7 +92,7 @@ async def on_message(message):
     # nawiązanie połączenia SSH
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect('34.116.177.154', username='patgi', key_filename='google_key')
+        ssh.connect('VM IP', username='ssh user', key_filename='ssh key')
 
         # uruchomienie skryptu Bash
         stdin, stdout, stderr = ssh.exec_command(f'bash {"mcRestart"}')
