@@ -19,7 +19,7 @@ games = [instanceStatus, gameStatus]
 #https://stackoverflow.com/questions/27535945/how-to-access-ssh-keys-for-a-google-cloud-platform-compute-engine-vm-instance
 def start_instance():
     # The API endpoint
-    url = "https://europe-central2-primal-pod-376313.cloudfunctions.net/vm-start"
+    url = "API endpoint"
 
     # A GET request to the API
     response = requests.get(url)
@@ -31,7 +31,7 @@ def start_instance():
 
 def stop_instance():
     # The API endpoint
-    url = "https://europe-central2-primal-pod-376313.cloudfunctions.net/vm-stop"
+    url = "API endpoint"
 
     # A GET request to the API
     response = requests.get(url)
@@ -45,7 +45,7 @@ def start_mc():
     # nawiązanie połączenia SSH
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect('34.116.177.154', username='patgi', key_filename='google_key')
+        ssh.connect('VM IP', username='ssh user', key_filename='ssh key')
 
         # uruchomienie skryptu Bash
         stdin, stdout, stderr = ssh.exec_command(f'bash {"mcStart"}')
@@ -59,13 +59,13 @@ def start_mc():
         print(output)
         if errors:
             print(errors)
-        return new_text, errors
+        return 
 
 def stop_mc():
     # nawiązanie połączenia SSH
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect('34.116.177.154', username='patgi', key_filename='google_key')
+        ssh.connect('VM IP', username='ssh user', key_filename='ssh key')
 
         # uruchomienie skryptu Bash
         stdin, stdout, stderr = ssh.exec_command(f'bash {"mcStop"}')
@@ -79,13 +79,13 @@ def stop_mc():
         print(output)
         if errors:
             print(errors)
-        return new_text,errors
+        return 
 
 def restart_mc():
         # nawiązanie połączenia SSH
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect('34.116.177.154', username='patgi', key_filename='google_key')
+        ssh.connect('VM IP', username='ssh user', key_filename='ssh key')
 
         # uruchomienie skryptu Bash
         stdin, stdout, stderr = ssh.exec_command(f'bash {"mcRestart"}')
@@ -111,28 +111,33 @@ async def update_status():
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
-    await tree.sync(guild=discord.Object(id=319014647317528577))
+    await tree.sync(guild=discord.Object(id="IDserwera"))
     client.loop.create_task(update_status())
 
-@tree.command(name = "start_maszyny_wirtualnej", description = "Ta komedna startuje maszyne wirtualna", guild=discord.Object(id=319014647317528577))
+@tree.command(name = "start_maszyny_wirtualnej", description = "Ta komedna startuje maszyne wirtualna", guild=discord.Object(id="IDserwera"))
 async def start_maszyny_wirtualnej(interaction):
     await interaction.response.send_message("Masznyna Ruszyła I Nic Jej Nie Zatrzyma (Daj jej 1-2 min żeby było GIT :LIKE:)")
     start_instance()
 
-@tree.command(name = "stop_maszyny_wirtualnej", description = "Ta komendta zatrzymuje maszyne wirtualna", guild=discord.Object(id=319014647317528577))
+@tree.command(name = "stop_maszyny_wirtualnej", description = "Ta komendta zatrzymuje maszyne wirtualna", guild=discord.Object(id="IDserwera"))
 async def stop_maszyny_wirtualnej(interaction):
     await interaction.response.send_message("Maszny Została Zatrzymana")
     stop_instance()
 
-@tree.command(name = "start_serwera_minecraft", description = "Ta komendta startuje serwer Minecfrat", guild=discord.Object(id=319014647317528577))
+@tree.command(name = "start_serwera_minecraft", description = "Ta komendta startuje serwer Minecfrat", guild=discord.Object(id="IDserwera"))
 async def start_serwera_minecraft(interaction):
     await interaction.response.send_message("Serwer Został Urchomiony")
     start_mc()
 
-@tree.command(name = "stop_serwera_minecraft", description = "Ta komendta zatrzymuje serwer Minecfrat", guild=discord.Object(id=319014647317528577))
+@tree.command(name = "stop_serwera_minecraft", description = "Ta komendta zatrzymuje serwer Minecfrat", guild=discord.Object(id="IDserwera"))
 async def stop_serwera_minecraft(interaction):
     await interaction.response.send_message("Serwer Został Zatrzymany")
     stop_mc()
 
-client.run('ODIzOTMzMzI1MTM5MjQ3MTI0.GqHLzl.pu6BZAxfJTs0BZOnpD7YLIZD_yT6mttLdA5qFI')
+@tree.command(name = "restart_serwera_minecraft", description = "Ta komendta restartuje serwer Minecfrat", guild=discord.Object(id="IDserwera"))
+async def restart_serwera_minecraft(interaction):
+    await interaction.response.send_message("Serwer Został Zrestartowany")
+    restart_mc()
+
+client.run('Discord Bot Token')
 
