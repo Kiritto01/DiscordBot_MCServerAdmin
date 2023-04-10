@@ -3,10 +3,17 @@ from discord import app_commands
 import paramiko
 import requests
 import re
+import random
+import asyncio
 
 intents = discord.Intents.all()
 client = discord.Client(command_prefix='!', intents=intents)
 tree = app_commands.CommandTree(client)
+
+instanceStatus = ""
+gameStatus = ""
+
+games = [instanceStatus, gameStatus]
 
 #Tutorial z jakiego to robiłem https://www.youtube.com/watch?v=afPxQTqlMtg&ab_channel=TheCloudNerd
 #https://stackoverflow.com/questions/27535945/how-to-access-ssh-keys-for-a-google-cloud-platform-compute-engine-vm-instance
@@ -20,7 +27,6 @@ def start_instance():
     # Print the response
     response_json = response.json()
     print(response_json)
-
     return
 
 def stop_instance():
@@ -33,7 +39,6 @@ def stop_instance():
     # Print the response
     response_json = response.json()
     print(response_json)
-
     return
 
 def start_mc():
@@ -95,10 +100,19 @@ def restart_mc():
             print(errors)
         return
 
+
+async def update_status():
+    while True:
+        game = random.choice(games)
+        await client.change_presence(activity=discord.Game(name=game))
+        await asyncio.sleep(2)
+
+
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     await tree.sync(guild=discord.Object(id=319014647317528577))
+    client.loop.create_task(update_status())
 
 @tree.command(name = "start_maszyny_wirtualnej", description = "Ta komedna startuje maszyne wirtualna", guild=discord.Object(id=319014647317528577))
 async def start_maszyny_wirtualnej(interaction):
@@ -110,12 +124,12 @@ async def stop_maszyny_wirtualnej(interaction):
     await interaction.response.send_message("Maszny Została Zatrzymana")
     stop_instance()
 
-@tree.command(name = "start_serwera_minecraft", description = "Ta komendta zatrzymuje maszyne wirtualna", guild=discord.Object(id=319014647317528577))
+@tree.command(name = "start_serwera_minecraft", description = "Ta komendta startuje serwer Minecfrat", guild=discord.Object(id=319014647317528577))
 async def start_serwera_minecraft(interaction):
     await interaction.response.send_message("Serwer Został Urchomiony")
     start_mc()
 
-@tree.command(name = "stop_serwera_minecraft", description = "Ta komendta zatrzymuje maszyne wirtualna", guild=discord.Object(id=319014647317528577))
+@tree.command(name = "stop_serwera_minecraft", description = "Ta komendta zatrzymuje serwer Minecfrat", guild=discord.Object(id=319014647317528577))
 async def stop_serwera_minecraft(interaction):
     await interaction.response.send_message("Serwer Został Zatrzymany")
     stop_mc()
