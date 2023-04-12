@@ -5,6 +5,19 @@ import requests
 import re
 import random
 import asyncio
+import json
+
+with open('config.json') as f:
+    config = json.load(f)
+
+TOKEN = config['token']
+API_URL_1 = config['apiURL1']
+API_URL_2 = config['apiURL2']
+VM_IP = config['vmIP']
+SSH_USER = config['sshUser']
+SSH_PASS = config['sshPass']
+SERVER_ID = config['serwerID']
+
 
 intents = discord.Intents.all()
 client = discord.Client(command_prefix='!', intents=intents)
@@ -19,7 +32,7 @@ games = [instanceStatus, gameStatus]
 #https://stackoverflow.com/questions/27535945/how-to-access-ssh-keys-for-a-google-cloud-platform-compute-engine-vm-instance
 def start_instance():
     # The API endpoint
-    url = "API endpoint"
+    url = API_URL_1
 
     # A GET request to the API
     response = requests.get(url)
@@ -31,7 +44,7 @@ def start_instance():
 
 def stop_instance():
     # The API endpoint
-    url = "API endpoint"
+    url = API_URL_2
 
     # A GET request to the API
     response = requests.get(url)
@@ -45,7 +58,7 @@ def start_mc():
     # nawiązanie połączenia SSH
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect('VM IP', username='ssh user', key_filename='ssh key')
+        ssh.connect(VM_IP, username=SSH_USER, key_filename=SSH_PASS)
 
         # uruchomienie skryptu Bash
         stdin, stdout, stderr = ssh.exec_command(f'bash {"mcStart"}')
@@ -59,13 +72,13 @@ def start_mc():
         print(output)
         if errors:
             print(errors)
-        return 
+        return new_text, errors
 
 def stop_mc():
     # nawiązanie połączenia SSH
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect('VM IP', username='ssh user', key_filename='ssh key')
+        ssh.connect(VM_IP, username=SSH_USER, key_filename=SSH_PASS)
 
         # uruchomienie skryptu Bash
         stdin, stdout, stderr = ssh.exec_command(f'bash {"mcStop"}')
@@ -79,13 +92,13 @@ def stop_mc():
         print(output)
         if errors:
             print(errors)
-        return 
+        return new_text,errors
 
 def restart_mc():
         # nawiązanie połączenia SSH
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect('VM IP', username='ssh user', key_filename='ssh key')
+        ssh.connect(VM_IP, username=SSH_USER, key_filename=SSH_PASS)
 
         # uruchomienie skryptu Bash
         stdin, stdout, stderr = ssh.exec_command(f'bash {"mcRestart"}')
@@ -111,33 +124,33 @@ async def update_status():
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
-    await tree.sync(guild=discord.Object(id="IDserwera"))
+    await tree.sync(guild=discord.Object(id=SERVER_ID))
     client.loop.create_task(update_status())
 
-@tree.command(name = "start_maszyny_wirtualnej", description = "Ta komedna startuje maszyne wirtualna", guild=discord.Object(id="IDserwera"))
+@tree.command(name = "start_maszyny_wirtualnej", description = "Ta komedna startuje maszyne wirtualna", guild=discord.Object(id=SERVER_ID))
 async def start_maszyny_wirtualnej(interaction):
     await interaction.response.send_message("Masznyna Ruszyła I Nic Jej Nie Zatrzyma (Daj jej 1-2 min żeby było GIT :LIKE:)")
     start_instance()
 
-@tree.command(name = "stop_maszyny_wirtualnej", description = "Ta komendta zatrzymuje maszyne wirtualna", guild=discord.Object(id="IDserwera"))
+@tree.command(name = "stop_maszyny_wirtualnej", description = "Ta komendta zatrzymuje maszyne wirtualna", guild=discord.Object(id=SERVER_ID))
 async def stop_maszyny_wirtualnej(interaction):
     await interaction.response.send_message("Maszny Została Zatrzymana")
     stop_instance()
 
-@tree.command(name = "start_serwera_minecraft", description = "Ta komendta startuje serwer Minecfrat", guild=discord.Object(id="IDserwera"))
+@tree.command(name = "start_serwera_minecraft", description = "Ta komendta startuje serwer Minecfrat", guild=discord.Object(id=SERVER_ID))
 async def start_serwera_minecraft(interaction):
     await interaction.response.send_message("Serwer Został Urchomiony")
     start_mc()
 
-@tree.command(name = "stop_serwera_minecraft", description = "Ta komendta zatrzymuje serwer Minecfrat", guild=discord.Object(id="IDserwera"))
+@tree.command(name = "stop_serwera_minecraft", description = "Ta komendta zatrzymuje serwer Minecfrat", guild=discord.Object(id=SERVER_ID))
 async def stop_serwera_minecraft(interaction):
     await interaction.response.send_message("Serwer Został Zatrzymany")
     stop_mc()
 
-@tree.command(name = "restart_serwera_minecraft", description = "Ta komendta restartuje serwer Minecfrat", guild=discord.Object(id="IDserwera"))
-async def restart_serwera_minecraft(interaction):
+@tree.command(name = "restart_serwera_minecraft", description = "Ta komendta restatuje serwer Minecfrat", guild=discord.Object(id=SERVER_ID))
+async def stop_serwera_minecraft(interaction):
     await interaction.response.send_message("Serwer Został Zrestartowany")
     restart_mc()
 
-client.run('Discord Bot Token')
+client.run(TOKEN)
 
